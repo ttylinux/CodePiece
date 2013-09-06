@@ -9,14 +9,26 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Xml;
 
 
-
-
-
 /**
- * Ҫ������XML�ļ������ݣ� <?xml version="1.0" encoding="UTF-8"?>
- *  <books> <book id="12"> <name>thinking in java</name> <price>85.5</price> </book> <book id="15"> <name>Spring in Action</name>
- * <price>39.0</price> </book> </books>
- */
+*
+* <?xml version="1.0" encoding="UTF-8"?>
+*<books>
+	<book id="12">
+		<name>thinking in java</name>
+		<price>85.5</price>
+	</book>
+	<book id="15">
+		<name>Spring in Action</name>
+		<price>39.0</price>
+	</book>
+</books>
+* 
+* 
+***/
+
+
+
+
 
 
 public class PullParserXMLService
