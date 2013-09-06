@@ -13,10 +13,11 @@ import android.util.Xml;
 
 
 /**
- * Òª½âÎöµÄXMLÎÄ¼şµÄÄÚÈİ£º <?xml version="1.0" encoding="UTF-8"?>
+ * Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½XMLï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ <?xml version="1.0" encoding="UTF-8"?>
  *  <books> <book id="12"> <name>thinking in java</name> <price>85.5</price> </book> <book id="15"> <name>Spring in Action</name>
  * <price>39.0</price> </book> </books>
  */
+
 
 public class PullParserXMLService
 {
@@ -30,19 +31,19 @@ public class PullParserXMLService
 		try
 		{
 			parser.setInput(is, "UTF-8");
-			int event = parser.getEventType(); // ²úÉúµÚÒ»¸öÊÂ¼ş
+			int event = parser.getEventType(); // äº§ç”Ÿç¬¬ä¸€ä¸ªäº‹ä»¶
 
-			while (event != XmlPullParser.END_DOCUMENT) // Ö»Òª²»ÊÇXMLÎÄµµµÄ½áÊøÊÂ¼ş£¬¾Í²»¶Ï½âÎö
+			while (event != XmlPullParser.END_DOCUMENT) // åªè¦ä¸æ˜¯XMLæ–‡æ¡£çš„ç»“æŸäº‹ä»¶ï¼Œå°±ä¸æ–­è§£æ
 			{
 				switch (event)
-				// ¸ù¾İ±êÇ©À´È·¶¨£¬Òª×öÊ²Ã´
+				// æ ¹æ®æ ‡ç­¾æ¥ç¡®å®šï¼Œè¦åšä»€ä¹ˆ
 				{
 
-					case XmlPullParser.START_DOCUMENT: // Õû¸öXMLÎÄ¼şµÄ¿ªÊ¼
+					case XmlPullParser.START_DOCUMENT: // æ•´ä¸ªXMLæ–‡ä»¶çš„å¼€å§‹
 						books = new ArrayList<Book>();
 						break;
 
-					case XmlPullParser.START_TAG:// ±êÇ©Í·µÄ¿ªÊ¼ÊÂ¼ş
+					case XmlPullParser.START_TAG:// æ ‡ç­¾å¤´çš„å¼€å§‹äº‹ä»¶
 						if ("book".equals(parser.getName()))
 						{
 							book = new Book();
@@ -67,18 +68,18 @@ public class PullParserXMLService
 						break;
 
 					case XmlPullParser.END_TAG:
-						if ("book".equals(parser.getName())) // ÅĞ¶Ï½áÊøµÄ±êÇ©ÊÇ·ñÊÇbook
+						if ("book".equals(parser.getName())) // åˆ¤æ–­ç»“æŸçš„æ ‡ç­¾æ˜¯å¦æ˜¯book
 						{
 							books.add(book);
 							book = null;
 						}
 						break;
 
-				} // switch½áÊø---XMLÖĞµÄÒ»¸öÄÚ²¿ÔªËØ´¦ÀíÍê±Ï
-				event = parser.next(); // ´¦ÀíÏÂÒ»¸öÔªËØ
+				} // switchç»“æŸ---XMLä¸­çš„ä¸€ä¸ªå†…éƒ¨å…ƒç´ å¤„ç†å®Œæ¯•
+				event = parser.next(); // å¤„ç†ä¸‹ä¸€ä¸ªå…ƒç´ 
 
-			}//Õû¸öXMLÎÄ¼ş´¦ÀíÍê±Ï
-			
+			}// æ•´ä¸ªXMLæ–‡ä»¶å¤„ç†å®Œæ¯•
+
 			return books;
 
 		}
@@ -95,5 +96,4 @@ public class PullParserXMLService
 
 		return null;
 	}
-
 }
