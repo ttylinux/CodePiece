@@ -43,11 +43,12 @@ public class UIActivity extends Activity
 		super.onResume();
 		workThread = new WorkThread(this);
 		workThread.start();
+		//不能在这里初始化workHandler,在这里初始化，并没有获得workHandler
 		//workHandler = workThread.getWorkHandler();会被告知，workHandler是null的
 		
 		/**
 		 * 
-		 *要在这里，对uiHandler进行初始化----否则，即使拥有uiHandler，也不可以操作UI线程中的各种界面资源 
+		 *要在这里onResumt()，对uiHandler进行初始化----否则，即使拥有uiHandler，也不可以操作UI线程中的各种界面资源 
 		 */
 		if(null == uihandler)
 		{
@@ -76,7 +77,7 @@ public class UIActivity extends Activity
 			public void onClick(View v)
 			{
 				// TODO Auto-generated method stub
-				workHandler = workThread.getWorkHandler();	 //要在这里
+				workHandler = workThread.getWorkHandler();	 //要在这里，要在非回调方法中初始化workHandler
 				if(null == workHandler)
 				{
 					Toast.makeText(UIActivity.this, "workhandler is null", Toast.LENGTH_SHORT).show();
