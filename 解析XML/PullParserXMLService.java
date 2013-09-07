@@ -9,6 +9,23 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Xml;
 
 
+/**
+*
+* <?xml version="1.0" encoding="UTF-8"?>
+*<books>
+	<book id="12">
+		<name>thinking in java</name>
+		<price>85.5</price>
+	</book>
+	<book id="15">
+		<name>Spring in Action</name>
+		<price>39.0</price>
+	</book>
+</books>
+* 
+* 
+***/
+
 
 
 
@@ -26,19 +43,19 @@ public class PullParserXMLService
 		try
 		{
 			parser.setInput(is, "UTF-8");
-			int event = parser.getEventType(); // �����һ���¼�
+			int event = parser.getEventType(); // 产生第一个事件
 
-			while (event != XmlPullParser.END_DOCUMENT) // ֻҪ����XML�ĵ��Ľ����¼����Ͳ��Ͻ���
+			while (event != XmlPullParser.END_DOCUMENT) // 只要不是XML文档的结束事件，就不断解析
 			{
 				switch (event)
-				// ��ݱ�ǩ��ȷ����Ҫ��ʲô
+				// 根据标签来确定，要做什么
 				{
 
-					case XmlPullParser.START_DOCUMENT: // ���XML�ļ��Ŀ�ʼ
+					case XmlPullParser.START_DOCUMENT: // 整个XML文件的开始
 						books = new ArrayList<Book>();
 						break;
 
-					case XmlPullParser.START_TAG:// ��ǩͷ�Ŀ�ʼ�¼�
+					case XmlPullParser.START_TAG:// 标签头的开始事件
 						if ("book".equals(parser.getName()))
 						{
 							book = new Book();
@@ -63,18 +80,18 @@ public class PullParserXMLService
 						break;
 
 					case XmlPullParser.END_TAG:
-						if ("book".equals(parser.getName())) // �жϽ���ı�ǩ�Ƿ���book
+						if ("book".equals(parser.getName())) // 判断结束的标签是否是book
 						{
 							books.add(book);
 							book = null;
 						}
 						break;
 
-				} // switch����---XML�е�һ���ڲ�Ԫ�ش������
-				event = parser.next(); // ������һ��Ԫ��
+				} // switch结束---XML中的一个内部元素处理完毕
+				event = parser.next(); // 处理下一个元素
 
-			}//���XML�ļ��������
-			
+			}// 整个XML文件处理完毕
+
 			return books;
 
 		}
@@ -91,5 +108,4 @@ public class PullParserXMLService
 
 		return null;
 	}
-
 }
