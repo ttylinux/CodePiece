@@ -216,3 +216,18 @@ public class LabelView extends View {
         canvas.drawText(mText, getPaddingLeft(), getPaddingTop() - mAscent, mTextPaint);
     }
 }
+
+/**
+*
+*创建attrs.xml文件，并在其中写上，你想要提供的属性项：
+<resources>
+.....
+    <declare-styleable name="LabelView">
+        <attr name="text" format="string" />
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
+    </declare-styleable>
+	....
+</resources>
+*
+*/
