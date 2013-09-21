@@ -106,6 +106,7 @@ public class AnimationCloning extends Activity {
         private ShapeHolder addBall(float x, float y) {
             OvalShape circle = new OvalShape();
             circle.resize(50f * mDensity, 50f * mDensity);
+            
             ShapeDrawable drawable = new ShapeDrawable(circle);
             ShapeHolder shapeHolder = new ShapeHolder(drawable);
             shapeHolder.setX(x - 25f);
@@ -126,9 +127,19 @@ public class AnimationCloning extends Activity {
 
         @Override
         protected void onDraw(Canvas canvas) {
+        	//将四个球画在Canvas上
             for (int i = 0; i < balls.size(); ++i) {
                 ShapeHolder shapeHolder = balls.get(i);
                 canvas.save();
+                /**
+                 *Saves the current matrix and clip onto a private stack. 
+                 *Subsequent calls to translate,scale,rotate,skew,concat or clipRect,clipPath 
+                 *will all operate as usual, 
+                 *but when the balancing call to restore() is made, 
+                 *those calls will be forgotten, and 
+                 *the settings that existed before 
+                 *the save()// will be reinstated(恢复).
+                 */
                 canvas.translate(shapeHolder.getX(), shapeHolder.getY());
                 shapeHolder.getShape().draw(canvas);
                 canvas.restore();
@@ -139,10 +150,23 @@ public class AnimationCloning extends Activity {
             createAnimation();
             animation.start();
         }
-
+        
         public void onAnimationUpdate(ValueAnimator animation) {
             invalidate();
         }
+        /**
+         * Depending on what property or object you are animating, 
+         * you might need to call the invalidate() method on a View
+         *  to force the screen to redraw itself with the updated animated values. 
+         *  You do this in the onAnimationUpdate() callback. 
+         *  For example, animating the color property of a Drawable object only
+         *  cause updates to the screen when that object redraws itself. 
+         *  All of the property setters on View, such as setAlpha()and setTranslationX() 
+         *   //invalidate the View properly, so you do not need to invalidate the View
+         *  when calling these methods with new values. 
+         *  
+         */
+        
 
     }
 }
