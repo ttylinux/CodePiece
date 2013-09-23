@@ -13,7 +13,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
-
+/**
+ *@author lushuwei(Albert) 
+ */
 
 
 public class MainActivity extends Activity
@@ -66,7 +68,7 @@ public class MainActivity extends Activity
 		spinner1.setAdapter(oneArray);
 		//---可行
 
-		//在使用BaseAdapter的时候，不需要设定DropDownViewResource
+//		在使用BaseAdapter的时候，不需要设定DropDownViewResource
 //		 OneBaseAdapter one = new OneBaseAdapter(str,this);
 //		 spinner1.setAdapter(one);
 		 

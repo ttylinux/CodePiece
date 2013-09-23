@@ -6,10 +6,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
-
-
-
+/**
+ *@author lushuwei(Albert) 
+ */
 public class OneBaseAdapter extends BaseAdapter
 {
 	private String[] str;

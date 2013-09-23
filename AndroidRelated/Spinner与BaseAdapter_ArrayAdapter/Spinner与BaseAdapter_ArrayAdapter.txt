@@ -1,4 +1,6 @@
-
+/**
+ *@author lushuwei(Albert) 
+ */
 0.虽然ArrayAdapter是BaseAdapter的子类，但是二者在使用上存在些许差别。
 1.Spinner的下拉列表中的每一个Item的外观，均可可以通过BaseAdapter，ArrayAdapter来自定义。
 
@@ -83,4 +85,9 @@ OneArrayAdapter oneArray = new OneArrayAdapter(this, str);
 		 
 		 
 附加：
-Spinner只能监听OnItemSelectListener；不能监听OnItemClickListener(可以设置，但是在运行时会出现异常)。
+1.Spinner只能监听OnItemSelectListener；不能监听OnItemClickListener(可以设置，但是在运行时会出现异常)。
+2.在使用ArrayAdapter的时候，你要自定义ArrayAdapter，Spinner对系统的ArrayAdapter不买单，即：
+// ArrayAdapter<String> orginArray = new ArrayAdapter<String>(this,0,str);
+// orginArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// spinner1.setAdapter(orginArray);
+// 要用自定义的ArrayAdapter才可以---上述的不可以。----不可行
