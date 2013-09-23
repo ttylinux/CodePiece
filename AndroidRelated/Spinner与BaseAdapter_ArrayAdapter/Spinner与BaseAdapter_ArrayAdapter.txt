@@ -1,0 +1,86 @@
+
+0.虽然ArrayAdapter是BaseAdapter的子类，但是二者在使用上存在些许差别。
+1.Spinner的下拉列表中的每一个Item的外观，均可可以通过BaseAdapter，ArrayAdapter来自定义。
+
+2.但是，二者在使用上，有区别：
+1)使用BaseAdapter来给Spinner提供Item的外观的时候，其getView中，自定义的View外观，不可以Inflate.
+也就是不能通过XML来定义。如下：
+@Override
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
+		// TODO Auto-generated method stub
+
+		TextView text;
+		text = new TextView(context);
+		text.setText(str[position]);
+		// ---可行
+
+		// 下述代码不可行。在BaseAdapter中不可以直接inflate;但是在ArrayAdapter中可行
+		// if(convertView == null)
+		// {
+		// convertView = View.inflate(context, R.layout.text, null);
+		// text = (TextView)convertView.findViewById(R.id.text);
+		// text.setText(str[position]);
+		// convertView.setTag(text);
+		//
+		// }else
+		// {
+		// text = (TextView)convertView.getTag();
+		// if(text == null)
+		// {
+		// text = new TextView(context);
+		// text.setText(str[position]);
+		// }
+		// }
+
+		return text;
+	}
+	
+2）而使用ArrayAdapter，则在getView中，返回的View用作Spinner的外观，并且View可以通过两种方式来绘制，
+通过代码设置和通过XML，然后Inflate相应的XML，如下：
+@Override
+	public View getView(int position, View convertView, ViewGroup viewgroup)
+	{
+		TextView text;
+		
+//		 text = new TextView(context);
+//		text.setText(str[position]);
+//    ----在BaseAdapter中也是可行的；可行
+		
+		
+		//下述代码，在BaseAdapter中是不可行的；但是在这里可行
+		 if(convertView == null)
+		 {
+		 convertView = View.inflate(context, R.layout.text, null);
+		 text = (TextView)convertView.findViewById(R.id.text);
+		 text.setText(str[position]);
+		 convertView.setTag(text);
+		
+		 }else
+		 {
+		 text = (TextView)convertView.getTag();
+		 if(text == null)
+		 {
+		 text = new TextView(context);
+		 text.setText(str[position]);
+		 }
+		 }
+		
+		return text;
+	}
+	
+3.在给Spinner设定对应的Adapter的时候，二者也是存在区别的：
+1)使用ArrayAdapter作为Spinner的Adapter的时候，ArrayAdapter还要指定DropDownViewResource。
+如下：
+OneArrayAdapter oneArray = new OneArrayAdapter(this, str);
+		oneArray.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		spinner1.setAdapter(oneArray);
+2）使用BaseAdapter作为Spinner的Adapter的时候，BaseAdapter不用指定DropDownViewResource，直接
+这样：
+		在使用BaseAdapter的时候，不需要设定DropDownViewResource
+		 OneBaseAdapter one = new OneBaseAdapter(str,this);
+		 spinner1.setAdapter(one);
+		 
+		 
+附加：
+Spinner只能监听OnItemSelectListener；不能监听OnItemClickListener(可以设置，但是在运行时会出现异常)。
