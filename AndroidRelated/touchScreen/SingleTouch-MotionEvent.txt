@@ -1,0 +1,158 @@
+
+1. MotionEvent
+屏幕上的触摸事件，用MotionEvent封装。
+
+2. MotionEvent的成员变量及意义
+1) MotionEvent.ACTION_DOWN(值0) --点击屏幕的时候，系统会生成一个MotionEvent，用来描述该事件。
+此时，MotionEvent的实例方法getAction()返回的值为0.
+
+2)MotionEvent.ACTION_MOVE(值2)--在屏幕上滑动的时候，系统会不断生成MotionEvent，用来描述每个滑动。
+
+3)MotionEvent.ACTION_UP(值1) ---离开屏幕时，系统会生成一个MotionEvent，用来记录某次动作的离开。
+在ACTION_DOWN和ACTION_UP之间，有多个ACTION_MOVE事件。完整的一次触摸屏幕事件，包含ACTION_DOWN,
+ACTION_MOVE(多个事件)，ACTION_UP。
+
+4)MotionEvent.ACTION_CANCEL(值3)---
+5)MotionEvent.ACTION_OUTSIDE(值4)--
+
+3.当用onTouch(View v, MotionEvent event)或者onTouchEvent(MotionEvent event)处理MotionEvent事件时，
+如果返回值是false，那么相应的View组件就只接收到最开始的ACTION_DOWN事件，其他事件，系统不会传递给
+它。
+重点："
+比如，下面onTouch方法返回true,那么trueBtnTop就会就收到余下的MotionEvent事件，即使后来的操作，
+不是在trueBtnTop上进行，也依然是由trueBtnTop来接收(比如多个ACTION_MOVE事件，每接收到一个MotionEvent事件，
+就会回调一次onTouch方法；只有当onTouch方法返回false时，该组件才不会接收到后续的事件)，因为最初
+ACTION_DOWN是发生在trueBtnTop上的。直到一次触摸操作结束。"
+
+
+比如，下面onTouch方法返回false：---falseBtnTop只接收到ACTION_DOWN事件。
+falseBtnTop -----------------------------
+falseBtnTop Got view falseBtnTop in onTouch
+falseBtnTop Action: 0
+falseBtnTop Location: 61.309372 x 44.281494
+falseBtnTop Edge flags: 0
+falseBtnTop Pressure: 0.0627451 Size: 0.26666668
+falseBtnTop Downtime: 28612178ms
+falseBtnTop Event time: 28612178ms Elapsed: 0 ms
+falseBtnTop and I'm returning false
+falseBtnTop -----------------------------------
+falseBtnTop Action: 0
+falseBtnTop Location: 61.309372 x 44.281494
+falseBtnTop Edge flags: 0
+falseBtnTop Pressure: 0.0627451 Size: 0.26666668
+falseBtnTop Downtime: 28612178ms
+falseBtnTop Event time: 28612178ms Elapsed: 0 ms
+falseBtnTop super onTouchEvent() returns true
+falseBtnTop and I'm returning false
+比如，下面onTouch方法返回true,那么trueBtnTop就会就收到余下的MotionEvent事件，即使后来的操作，
+不是在trueBtnTop上进行，也依然是由trueBtnTop来接收(比如多个ACTION_MOVE事件)，因为最初ACTION_DOWN是发生在
+trueBtnTop上的。直到一次触摸操作结束。
+ACTION_DOWN(0)和ACTION_UP(1)之间，有多个ACTION_MOVE事件。
+trueBtnTop -----------------------------
+trueBtnTop Got view trueBtnTop in onTouch
+trueBtnTop Action: 0
+trueBtnTop Location: 42.8374 x 25.293747
+trueBtnTop Edge flags: 0
+trueBtnTop Pressure: 0.05490196 Size: 0.2
+trueBtnTop Down time: 24959412ms
+trueBtnTop Event time: 24959412ms Elapsed: 0 ms
+trueBtnTop and I'm returning true
+trueBtnTop -----------------------------
+trueBtnTop Got view trueBtnTop in onTouch
+trueBtnTop Action: 2
+trueBtnTop Location: 42.8374 x 25.293747
+trueBtnTop Edge flags: 0
+trueBtnTop Pressure: 0.05490196 Size: 0.2
+trueBtnTop Down time: 24959412ms
+trueBtnTop Event time: 24959530ms Elapsed: 118 ms
+trueBtnTop and I'm returning true
+trueBtnTop -----------------------------
+trueBtnTop Got view trueBtnTop in onTouch
+trueBtnTop Action: 1
+trueBtnTop Location: 42.8374 x 25.293747
+trueBtnTop Edge flags: 0
+trueBtnTop Pressure: 0.05490196 Size: 0.2
+trueBtnTop Down time: 24959412ms
+trueBtnTop Event time: 24959567ms Elapsed: 155 ms
+trueBtnTop and I'm returning true
+
+
+4.如何判断一个touch是否是hard touch
+通过size,和pressure的值的大小是否超过某个值来判断是不准确的，因为设备不同，会出现值不同。
+正确的做法是，通过比较ACTION_MOVE事件中的pressure的值是否不断增大，如果是，这可以知道，
+在发生的是一个hard touch。如下：我按下了一个hard touch之后产生的数据，Pressure的值是不断增大。
+	 Got view trueLayoutTop in onTouch
+	 Action: 0
+	 Location: 330.2452 x 372.67755
+	 Edge flags: 0
+	 Pressure: 0.325   Size: 0.0
+	 Down time: 55525069ms
+	 Event time: 55525069ms  Elapsed: 0 ms
+	 and I'm returning true
+	 -----------------------------
+	 Got view trueLayoutTop in onTouch
+	 Action: 2
+	 Location: 330.2452 x 372.67755
+	 Edge flags: 0
+	 Pressure: 0.32999998   Size: 0.0
+	 Down time: 55525069ms
+	 Event time: 55525076ms  Elapsed: 7 ms
+	 and I'm returning true
+	 -----------------------------
+	 Got view trueLayoutTop in onTouch
+	 Action: 2
+	 Location: 330.2452 x 372.67755
+	 Edge flags: 0
+	 Pressure: 0.34   Size: 0.0
+	 Down time: 55525069ms
+	 Event time: 55525090ms  Elapsed: 21 ms
+	 and I'm returning true
+	 -----------------------------
+	 Got view trueLayoutTop in onTouch
+	 Action: 2
+	 Location: 330.2452 x 372.67755
+	 Edge flags: 0
+	 Pressure: 0.345   Size: 0.0
+	 Down time: 55525069ms
+	 Event time: 55525097ms  Elapsed: 28 ms
+	 and I'm returning true
+
+5.系统分发事件的顺序
+1)一个组件，比如falseBtnTop，被按下了，并且它设置了OnTouchListener监听器；因为在界面上，
+是falseBtnTop被按下，所以是由falseBtnTop来接收事件信息，即onTouch(View v, MotionEvent event)
+中的View是falseBtnTop。
+2)如果在该onTouch种，返回true，则系统会将此次的触摸操作的所有事件都交给falseBtnTop。每产生
+一个MotionEvent，就回调一次该onTouch方法。直到，它返回false或者MotionEvent
+是ACTION_UP事件(表示一次触摸结束了)。
+3)上述的onTouch在某次事件处理中返回false，然后，系统会将该事件传递给falseBtnTop中的方法
+onTouchEvent()，如果onTouchEvent返回true，那么falseBtnTop内部还是会接收到余下的事件的；
+如果返回false，那么falseBtnTop将不会接收到余下的事件。然后，系统会开始寻找，将该事件分发给
+其他组件，比如，分发给falseBtnTop所在的容器trueLayoutTop，因为trueLayoutTop的监听器中的
+onTouch方法返回true，所以，该次触摸余下的事件，将会传递给trueLayoutTop组件。
+		 -----------------------------
+		 Got view falseBtnTop in onTouch
+		 Action: 0
+		 Location: 85.01362 x 59.86534
+		 Edge flags: 0
+		 Pressure: 0.195   Size: 0.0
+		 Down time: 57488473ms
+		 Event time: 57488473ms  Elapsed: 0 ms
+		 and I'm returning false
+		 -----------------------------------
+		 Action: 0
+		 Location: 85.01362 x 59.86534
+		 Edge flags: 0
+		 Pressure: 0.195   Size: 0.0
+		 Down time: 57488473ms
+		 Event time: 57488473ms  Elapsed: 0 ms
+		 super onTouchEvent() returns true
+		 and I'm returning false
+		 -----------------------------
+		 Got view trueLayoutTop in onTouch
+		 Action: 0
+		 Location: 85.01362 x 155.86534
+		 Edge flags: 0
+		 Pressure: 0.195   Size: 0.0
+		 Down time: 57488473ms
+		 Event time: 57488473ms  Elapsed: 0 ms
+		 and I'm returning true
