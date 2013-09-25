@@ -160,3 +160,12 @@ onTouchEvent()，如果onTouchEvent返回true，那么falseBtnTop内部还是会
 如果，falseBtnTop所在的容器trueLayoutTop，也是返回false，那么，此次事件之后，
 系统将不会再捕捉事件传给你。除非发生新的触摸操作，经过实验，而且要让Activity
 重新创建，系统才会再次进行事件传播。
+
+6.Recycling MotionEvents销毁MotionEvents
+	在大部分情况下，MotionEvent是由Android系统来负责回收销毁的。客户端程序员无需操作。
+	但是，比方说，系统通过onTouch将屏幕发生的一个触摸事件MotionEvent传递给你，
+	然后，你想保留这个MotionEvent，比如，作为Activity的成员对象值来保存；为什么要保存呢？
+	因为，系统每产生一个MotionEvent，传递给相应的View组件的回调方法之后，然后，就会销毁
+	该MotionEvent；而在某些时候，我们是需要保存前一个MotionEvent的。
+	在这种情况下，保留了实际的MotionEvent，那么，当你使用完后，你就要自行销毁它，通过调用
+	MotionEvent的recycle方法。
