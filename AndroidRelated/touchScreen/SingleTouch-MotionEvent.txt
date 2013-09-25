@@ -127,8 +127,9 @@ trueBtnTop and I'm returning true
 3)上述的onTouch在某次事件处理中返回false，然后，系统会将该事件传递给falseBtnTop中的方法
 onTouchEvent()，如果onTouchEvent返回true，那么falseBtnTop内部还是会接收到余下的事件的；
 如果返回false，那么falseBtnTop将不会接收到余下的事件。然后，系统会开始寻找，将该事件分发给
-其他组件，比如，分发给falseBtnTop所在的容器trueLayoutTop，因为trueLayoutTop的监听器中的
-onTouch方法返回true，所以，该次触摸余下的事件，将会传递给trueLayoutTop组件。
+其他组件(在这里可以发现，系统并没有分发给与falseBtnTop同级的trueBtnTop，而是分发给其容器)，
+分发给falseBtnTop所在的容器trueLayoutTop，因为trueLayoutTop的监听器中的onTouch方法返回true，
+所以，该次触摸余下的事件，将会传递给trueLayoutTop组件。
 		 -----------------------------
 		 Got view falseBtnTop in onTouch
 		 Action: 0
@@ -156,3 +157,6 @@ onTouch方法返回true，所以，该次触摸余下的事件，将会传递给
 		 Down time: 57488473ms
 		 Event time: 57488473ms  Elapsed: 0 ms
 		 and I'm returning true
+如果，falseBtnTop所在的容器trueLayoutTop，也是返回false，那么，此次事件之后，
+系统将不会再捕捉事件传给你。除非发生新的触摸操作，经过实验，而且要让Activity
+重新创建，系统才会再次进行事件传播。
