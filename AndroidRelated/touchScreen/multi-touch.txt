@@ -1,0 +1,237 @@
+多个手指在屏幕上移动时---多点触控
+
+1.简单的情况
+只发生了一次触摸操作。一次操作发生的事件：
+ACTION_DOWN(0)---->ACTION_MOVE(多个；值为2) ---->ACTION_UP(一次触摸操作结束；值为1)
+
+
+2.多个触摸操作发生的情况
+分析下面的输出---先后两个手指触摸了屏幕；然后又先后离开了屏幕。
+	trueLayout -----------------------------
+	trueLayout Got view trueLayout in onTouch
+	trueLayout Action: 0
+	trueLayout Number of pointers: 1
+	trueLayout Pointer Index: 0, Pointer Id: 0
+	trueLayout Location: 114.88211 x 499.77502
+	trueLayout Pressure: 0.047058824 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33733650ms Elapsed: 0 ms
+	Action Pointer index: 0
+	Action Pointer Id: 0
+	Action True Action value: 0
+	trueLayout -----------------------------
+	trueLayout Got view trueLayout in onTouch
+	trueLayout Action: 2
+	trueLayout Number of pointers: 1
+	trueLayout Pointer Index: 0, Pointer Id: 0
+	trueLayout Location: 114.88211 x 499.77502
+	trueLayout Pressure: 0.05882353 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33733740ms Elapsed: 90 ms
+	Action Pointer index: 0
+	Action Pointer Id: 0
+	Action True Action value: 2
+	trueLayout -----------------------------//这时候，第二个手指，也就是第二个触控操作发生了
+	trueLayout Got view trueLayout in onTouch
+	trueLayout Action: 261  //0x00000105.  //01 05表示的是ACTION_POINTER_DOWN(其中01表示是哪个触控点，01是Index值；
+	                                       // 05是就实际的DOWN值)，在多点触控下才出现
+	trueLayout Number of pointers: 2     //表示屏幕上有两个触控点;但是两个触控点发生的事件，都封装在同一个MotionEvent中。
+	trueLayout Pointer Index: 0, Pointer Id: 0  //Poniter Id是不变的；而Index是会变的。如果第一个触控点离开屏幕，
+	trueLayout Location: 114.88211 x 499.77502  //第二触控点的：Pointer Index 0, Pointer Id: 1
+	trueLayout Pressure: 0.05882353 Size: 0.13333334
+	trueLayout Pointer Index: 1, Pointer Id: 1
+	trueLayout Location: 320.30692 x 189.67395
+	trueLayout Pressure: 0.050980393 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33733962ms Elapsed: 312 ms
+	Action Pointer index: 1
+	Action Pointer Id: 1
+	Action True Action value: 0
+	trueLayout -----------------------------//两个触控点发生的移动操作，都封装在一个MotionEvent中
+	trueLayout Got view trueLayout in onTouch //然后，取数据的时候：public final float getY (int pointerIndex) 
+	trueLayout Action: 2                      //Index的值，是0,1,(Number of pointers) - 1。 
+	trueLayout Number of pointers: 2          //只要计算两个点的X的差距不断增大或者Y的差距不断增大，然后设定为放大操作。
+	trueLayout Pointer Index: 0, Pointer Id: 0
+	trueLayout Location: 111.474594 x 499.77502
+	trueLayout Pressure: 0.05882353 Size: 0.13333334
+	trueLayout Pointer Index: 1, Pointer Id: 1
+	trueLayout Location: 320.30692 x 189.67395
+	trueLayout Pressure: 0.050980393 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33734189ms Elapsed: 539 ms
+	Action Pointer index: 0
+	Action Pointer Id: 0
+	Action True Action value: 2
+	trueLayout -----------------------------//当屏幕上有两个触控点在操作，然后，此时，有一个触控点要离开屏幕
+	trueLayout Got view trueLayout in onTouch //此时，为了标识是哪一个离开，就有这么个ACTION_POINTER_UP
+	trueLayout Action: 6    //0x00000006      //00 06 ；其中00这个字节表示该触控点的Index；06，6这个是Up的值。
+	trueLayout Number of pointers: 2
+	trueLayout Pointer Index: 0, Pointer Id: 0
+	trueLayout Location: 111.474594 x 499.77502
+	trueLayout Pressure: 0.05882353 Size: 0.13333334
+	trueLayout Pointer Index: 1, Pointer Id: 1
+	trueLayout Location: 320.30692 x 189.67395
+	trueLayout Pressure: 0.050980393 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33734228ms Elapsed: 578 ms
+	Action Pointer index: 0
+	Action Pointer Id: 0
+	Action True Action value: 1
+	trueLayout -----------------------------
+	trueLayout Got view trueLayout in onTouch
+	trueLayout Action: 2
+	trueLayout Number of pointers: 1
+	trueLayout Pointer Index: 0, Pointer Id: 1
+	trueLayout Location: 318.84656 x 191.45105
+	trueLayout Pressure: 0.050980393 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33734240ms Elapsed: 590 ms
+	Action Pointer index: 0
+	Action Pointer Id: 1
+	Action True Action value: 2
+	trueLayout ----------------------------- //但是，当屏幕上只有一个触控点的时候，该触控点要离开屏幕，
+	trueLayout Got view trueLayout in onTouch //这时MotionEvent返回的是ACTION_DOWN(值为1)，
+	trueLayout Action: 1                      //Android系统这样做的原因，是为了向后兼容(在开始的版本中，只有单点触控)
+	trueLayout Number of pointers: 1
+	trueLayout Pointer Index: 0, Pointer Id: 1
+	trueLayout Location: 314.95224 x 190.5625
+	trueLayout Pressure: 0.050980393 Size: 0.13333334
+	trueLayout Downtime: 33733650ms
+	trueLayout Event time: 33734549ms Elapsed: 899 ms
+	Action Pointer index: 0
+	Action Pointer Id: 1
+	Action True Action value: 1
+再总结一下上述的分析：
+	1.Android系统依然是用一个MotionEvent来封装屏幕上的多点触控。但是可以在该MotionEvent中获取以下信息：
+	
+	1)屏幕上有多少个触控点getPointerCount()
+	
+	2)在确定有多少个触控点之后，就可以获取每个触控点的信息，操作跟单点触控一样，不同的是，在多点触控的
+	情况下，你要给出Index，告诉MotionEvent返回哪个触控点的信息给你getY (int pointerIndex);
+	getX (int pointerIndex).而PointerIndex的值范围是0,1,..,getPointerCount()-1。
+	
+	3)PointerId唯一标识一个触控点，并且不会变化；但是pointerIndex会变化
+	比方说，有两个触控点，A，B；A先DOWN，系统分配给它pointerIndex 0, pointerId 0;
+	B接着DOWN(此时ACTION_POINTER_DOWN的值为0x00000105,16*16+5 = 261)，系统分配给它pointerIndex 01,pointerId 1；
+	然后，A发生了UP(此时是ACTION_POINTER_UP，值为0x00000006,即6)。
+	然后，B在移动的时候，要获取B的信息，要提供的PointerIndex是0，而不是1；否则会出现错误。
+	也就是说，此时触控点B的信息为：pointerIndex 00, pointerId 1。
+	---所以说，某个触控点的pointerIndex会变化，但是其PointerID不会变化。当上述的B的操作完成，离开屏幕，
+	那么，与其相关的信息销毁了，其PointerID会被系统回收，赋予给后续其他的触控点。
+
+	2.ACTION_MOVE的值，总是2；而ACTION_POINTER_DOWN,ACTION_DOWN_UP则根据触控点数量有所变化
+	
+	ACTION_MOVE的值总是2.它不同于ACTION_POINTER_DOWN(0x0000 XX05;其中5是固定有的，XX是是触控点的索引值，
+	根据当前屏幕上有多少个触控点来定，比如，在发生ACTION_POINTER_DOWN之前，屏幕上有3个点，那么新的
+	ACTION_POINTER_DOWN，其值为0x0000 0305)，同理,对于ACTION_POINTER_UP（0x 0000 XX06，其中6是固定有的），
+	然后，如果最后一个触控点发生UP事件时，那么那么就是ACTION_UP(值为1；这样做是为了向后兼容)事件了。
+	
+3.针对ACTION_MOVE,可以获取发生过移动的所有点
+	比方说：触控点A按下，发生DOWN事件，接着发生ACTION_MOVE事件；
+	然后触控点B按下，发生DOWN事件，接着发生ACTION_MOVE事件(在屏幕上，两个触控点发生的所有操作，
+	系统都是用同一个MotionEvent来描述的)；
+	然后触控点C按下，发生DOWN事件，接着发生action_move事件。
+	然后，A离开，然后B离开，然后剩下C。
+	那么，此时C可以通过MotionEvent中的getHistorySize()获得发生过ACTION_MOVE事件的点的数量(3个)。
+	通过 getHistoricalOrientation (int pos),指定要获取哪个点的历史方向，比方说1，B触控点。
+	还有其他的点的历史信息，但是这些信息，都只是针对ACTION_MOVE事件。
+
+	public final int getHistorySize ()
+	Returns the number of historical points in this event. These are movements that
+	have occurred between this event and the previous event. 
+	This only applies to ACTION_MOVE events -- all other actions will have a size of 0.
+	Returns
+	Returns the number of historical points in the event.
+	
+下面是例子代码：
+public class MainActivity extends Activity implements OnTouchListener
+{
+	private int os;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		RelativeLayout layout1 = (RelativeLayout) findViewById(R.id.layout1);
+		layout1.setOnTouchListener(this);
+
+		try
+		{
+			os = Build.VERSION.SDK_INT;
+		}
+		catch (Exception e)
+		{
+			Log.v("Demo", "Exception is: " + e);
+			os = 3;
+		}
+	}
+
+	public boolean onTouch(View v, MotionEvent event)
+	{
+		String myTag = v.getTag().toString();
+		Log.v(myTag, "-----------------------------");
+		Log.v(myTag, "Got view " + myTag + " in onTouch");
+		Log.v(myTag, describeEvent(event));
+		logAction(event);
+		if ("true".equals(myTag.substring(0, 4)))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	protected String describeEvent(MotionEvent event)
+	{
+		StringBuilder result = new StringBuilder(500);
+		result.append("Action: ").append(event.getAction()).append("\n");
+		int numPointers = event.getPointerCount();
+		result.append("Number of pointers: ").append(numPointers).append("\n");
+		if (os >= 9) // Introduced in Android 2.3
+			result.append("Event source: ").append(event.getSource()).append("\n");
+		int ptrIdx = 0;
+		while (ptrIdx < numPointers)
+		{
+			int ptrId = event.getPointerId(ptrIdx);
+			/**
+			 * public final int getPointerId (int pointerIndex) 
+			 * 
+			 **/
+			result.append("Pointer Index: ").append(ptrIdx);
+			result.append(", Pointer Id: ").append(ptrId).append("\n");
+			result.append("   Location: ").append(event.getX(ptrIdx));
+			result.append(" x ").append(event.getY(ptrIdx)).append("\n");
+			result.append("   Pressure: ").append(event.getPressure(ptrIdx));
+			result.append("   Size: ").append(event.getSize(ptrIdx)).append("\n");
+
+			ptrIdx++;
+		}
+		result.append("Downtime: ").append(event.getDownTime()).append("ms\n");
+		result.append("Event time: ").append(event.getEventTime()).append("ms");
+		result.append("  Elapsed: ");
+		result.append(event.getEventTime() - event.getDownTime());
+		result.append(" ms\n");
+		return result.toString();
+	}
+
+	private void logAction(MotionEvent event)
+	{   
+		//Return the masked action being performed, without pointer index information.
+		//getActionMasked返回的值中，不包含pointerIndex的信息
+		int action = event.getActionMasked();
+		int ptrIndex = event.getActionIndex();
+		int ptrId = event.getPointerId(ptrIndex);
+
+		if (action == 5 || action == 6)
+			action = action - 5;
+
+		Log.v("Action", "Pointer index: " + ptrIndex);
+		Log.v("Action", "Pointer Id: " + ptrId);
+		Log.v("Action", "True action value: " + action);
+	}
+}
+
