@@ -1,0 +1,52 @@
+1.计算滑动速度
+在触摸屏上滑动的时候，会不断产生ACTION_MOVE事件，每个ACTION_MOVE事件，
+记录了某个点的位置。要计算滑动的速度，我们可以直接做：
+v = t * ( MoveF.x - MoveS.x) 这样某个时间段的速度，就可以得出。
+不过，Android提供了一个VelocityTracker来计算速度。
+
+2.VelocityTracker的使用
+一次触摸操作(有一个ACTION_DOWN事件，然后是多个action_move事件，最后是ACTION_UP事件)。
+记录ACTION_DOWN时，触摸点的位置；然后，在ACTION_MOVE事件中，不断添加ACTION_MOVE信息给
+VelocityTracker，这样VelocityTracker就可以获取数据进行计算。
+vTracker.computeCurrentVelocity(1000);表示，计算的时间段是1秒，也就是得到的结果是 每秒/像素.
+----要注意的是：屏幕的左上角(0,0)，从该处，往右则是正的；往下，则是正的；
+   (0,0) ---------------->x
+         |往
+		 |下
+		 |是
+		 |正
+         |
+         |
+         |Y		 
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		int action = event.getAction();
+		switch (action)
+		{
+			case MotionEvent.ACTION_DOWN:
+				if (vTracker == null)
+				{
+					vTracker = VelocityTracker.obtain();
+				}
+				else
+				{
+					vTracker.clear();
+				}
+				vTracker.addMovement(event);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				vTracker.addMovement(event);
+				vTracker.computeCurrentVelocity(1000);
+				Log.v(TAG, "X velocity is " + vTracker.getXVelocity() + " pixels per second");
+				Log.v(TAG, "Y velocity is " + vTracker.getYVelocity() + " pixels per second");
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				Log.v(TAG, " final X velocity is " + vTracker.getXVelocity() + " pixels per second");
+				Log.v(TAG, "final Y velocity is " + vTracker.getYVelocity() + " pixels per second");
+				vTracker.recycle();
+				break;
+		}
+		return true;
+	}
+	
