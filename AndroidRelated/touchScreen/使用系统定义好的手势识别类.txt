@@ -1,0 +1,99 @@
+
+	1.手势识别的基本过程
+	你在屏幕上触控滑动，每个点都会产生一个ACTION_MOVE事件，然后，在给定的一段时间里，
+	对产生过的所有ACTION_MOVE事件进行分析，取出每个事件发生时所对应的坐标点；分析它们，
+	就可以判定出，这段时间产生的轨迹是否与给定的轨迹相符合。
+	--------当然，这个实现过程，不需要自己做。对于像放大图片，缩小图片，“抛物线”这样轨迹的手势，系统
+	提供了相应的识别类，你所要做的就是在onTouch方法中，将每个MotionEvent作为参数传递给
+	它们。
+
+	2.识别放大，缩小的手势
+	ScaleGestureDetector根据输入的MotionEvent负责判断；
+	ScaleGestureListener负责通知，其中定义了出现了相应手势时，会被执行的方法
+
+	Detects scaling transformation gestures using the supplied MotionEvents. The ScaleGestureDetector.OnScaleGestureListener 
+	callback will notify users when a particular gesture event has occurred. This class should only 
+	be used with MotionEvents reported via touch. To use this class:
+
+	1.Create an instance of the ScaleGestureDetector for your View
+	2.In the onTouchEvent(MotionEvent) method ensure you call onTouchEvent(MotionEvent). 
+	The methods defined in your callback will be executed when the events occur.
+
+	------
+	1.创建一个ScaleGestureDetector实例，调用其中的onToucheEvent方法，并且传递MotionEvent给它。
+	2.ScaleGestrueDetecor实例根据输入信息，判断出是“放大”或者是“缩小”的手势时，它要回调
+	ScaleGestureDetector.OnScaleGestureListener或者是ScaleGestureDetector.SimpleOnScaleGestureListener
+	中的方法。
+	--所以，要传递一个ScaleGestureListener的实现给ScaleGestureDetector实例，在这里是，实例化
+	ScaleGestureDetector时，就提供：
+	public ScaleGestureDetector (Context context, ScaleGestureDetector.OnScaleGestureListener listener)
+
+public class MainActivity extends Activity
+{
+	private static final String TAG = "ScaleDetector";
+	private ImageView image;
+	private ScaleGestureDetector mScaleDetector;
+	private float mScaleFactor = 1f;
+	private Matrix mMatrix = new Matrix();
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		image = (ImageView) findViewById(R.id.image);
+		mScaleDetector = new ScaleGestureDetector(this, new ScaleListener());
+	}
+//这里，界面上的View不接收MotionEvent事件。
+//而是Activity来接收MotionEvent事件。该方法是Activity的
+//如果要界面上的View来接收MotionEvent事件，则Activity要实现接口android.view.View.OnTouchListener
+//然后，在该接口中的方法public boolean onTouch(View v, MotionEvent event),实现逻辑。
+//使用Activity的onToucheEvent，则只要屏幕上，发生了“放大”或者“缩小”的手势时，不管是在哪一个View上
+//发生的，都会回调；不是在View上发生的，也会回调。
+	@Override
+	public boolean onTouchEvent(MotionEvent ev)
+	{
+		Log.v(TAG, "in onTouchEvent");
+		// Give all events to ScaleGestureDetector
+		mScaleDetector.onTouchEvent(ev);
+
+		return true;
+	}
+
+	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener
+	{    //判断出是“放大”或者是“缩小”的手势时，ScaleGestureDetector就会回调该方法，
+	     //传递判断结果给MainActivity
+		@Override
+		public boolean onScale(ScaleGestureDetector detector)
+		{
+			//The current scaling factor. getScaleFactor()返回的是当前的缩放比例
+			//该值在1左右徘徊。缩小，则值小于1；放大，则值大于1
+			mScaleFactor *= detector.getScaleFactor();
+
+			// Make sure we don't get too small or too big
+			//缩小，最小比例为0.1 ；放大，最大放大到比例为5
+			mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+
+			Log.v(TAG, "in onScale, scale factor = " + mScaleFactor);
+			mMatrix.setScale(mScaleFactor, mScaleFactor);
+
+			image.setImageMatrix(mMatrix);
+			image.invalidate();
+			return true;
+		}
+	}
+}
+	总结：
+	1.ScaleGestureDetector负责判断，根据所输入的MotionEvent，判断这段时间的所有Motionevent是否构成一个指定的手势
+	2.类ScaleGestureDetector.SimpleOnScaleGestureListener
+	或者ScaleGestureDetector.OnScaleGestureListener，当判出来的时候，ScaleGestureDetector就会回调二者
+	中相应的方法。
+	3.如果使用接口，则要实现接口中的全部方法；如果使用类，则根据自己的需要，只需重写类中的某个方法便可，
+	其他方法，该类自身有默认的实现。
+	A convenience class to extend when you only want to listen for a subset of scaling-related events. 
+	This implements all methods in ScaleGestureDetector.OnScaleGestureListener but does nothing. 
+	onScale(ScaleGestureDetector) returns false so that a subclass can retrieve the accumulated scale factor
+	in an overridden onScaleEnd. onScaleBegin(ScaleGestureDetector) returns true.
+	
+	
