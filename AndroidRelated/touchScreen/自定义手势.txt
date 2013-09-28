@@ -9,7 +9,9 @@
 
 
 自定义手势中的基本概念
-一个手势笔画(gesture stroke)由多个手势点(gesture point)组成，所谓的手势点也就是MotionEvent中的(x,y)所描述的坐标点；一个手势(gesture)由多个手势笔画组成(gesture stroke)；一个手势文件(gesture store)包含多个已经定义好的手势(gesture)。一个手势文件，组成一个gesture library（手势库）
+一个手势笔画(gesture stroke)由多个手势点(gesture point)组成，所谓的手势点也就是MotionEvent中的(x,y)所描述的坐标点；
+一个手势(gesture)由多个手势笔画组成(gesture stroke)；
+一个手势文件(gesture store)包含多个已经定义好的手势(gesture)。一个手势文件，组成一个gesture library（手势库）
 gesture point ;gesture strok; gesture; gesture store;gesture library的关系如下图：
 
 
@@ -20,7 +22,8 @@ gesture point ;gesture strok; gesture; gesture store;gesture library的关系如
 要实现自定义手势，并且应用它，根据<<Anddroid pro4>>一书所讲的，是这么个思路：
 　　1.首先，你自己要设定好各个手势，并且设定好每个手势所对应的意义，这些手势都将存放在一个gesture store中，以一个文件表示；
 　　2.然后，要开发一个应用，该应用用到这些手势，那就将文件放在该应用的res/xml/raw中；
-　　3.在所开发的应用中，过程是这样的，系统读取用户接屏幕上所画手势，然后，去gesture store文件中去检索，看是否存在匹配的手势，如果找到匹配的，则返回该手势所定义的意义。
+　　3.在所开发的应用中，过程是这样的，系统读取用户接屏幕上所画手势，然后，去gesture store文件中去检索，看是否存在匹配的手势，
+　　如果找到匹配的，则返回该手势所定义的意义。
 
 接着要将的就是，实现上述3个功能的工具。
 
@@ -75,7 +78,8 @@ GestureOverlayView是用来读取手势输入的；
 下面是代码，
 逻辑过程是这样的：
 GestureOverlayView负责读取用户输入的手势；
-当读取到用户输入的手势时，就通过OnGesturePerformedListener中的方法，将读取到的信息传递给使用者(MainActivity).--- onGesturePerformed(GestureOverlayView view, Gesture gesture)
+当读取到用户输入的手势时，就通过OnGesturePerformedListener中的方法，将读取到的信息传递给使用者(MainActivity).
+--- onGesturePerformed(GestureOverlayView view, Gesture gesture)
 读取gesture library，这样就获取了已经预定义好的手势；然后，将预定义好的手势与用户输入的手势进行匹配，找到一个匹配，则输出结果。
 
 public class MainActivity extends Activity implements OnGesturePerformedListener
@@ -161,7 +165,9 @@ onGesturePerformed的Logcat的一个输出例子：
 
 从这个LogCat中，可以得到的逻辑是：
 　　ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
-　　recognize会取出gestureLib中的每个预定义好的手势与用户输入的一个手势进行比较。比如，有三个预定义好的手势，那么，就会有三个Prediction(与用户输入的一个手势的对比结果存放在其中)，其中score值最大的(表示与用户的输入最匹配)，则为第0个prediction。
+　　recognize会取出gestureLib中的每个预定义好的手势与用户输入的一个手势进行比较。比如，有三个预定义好的手势，那么，
+　　就会有三个Prediction(与用户输入的一个手势的对比结果存放在其中)，其中score值最大的(表示与用户的输入最匹配)，
+　　则为第0个prediction。
 　　
 
 记录预定义的手势
