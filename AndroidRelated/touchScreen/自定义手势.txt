@@ -1,0 +1,173 @@
+本文档要讲述的内容
+自定义手势中的基本概念
+实现自定义手势；检测手势
+记录预定义手势
+
+
+
+
+
+
+自定义手势中的基本概念
+一个手势笔画(gesture stroke)由多个手势点(gesture point)组成，所谓的手势点也就是MotionEvent中的(x,y)所描述的坐标点；一个手势(gesture)由多个手势笔画组成(gesture stroke)；一个手势文件(gesture store)包含多个已经定义好的手势(gesture)。一个手势文件，组成一个gesture library（手势库）
+gesture point ;gesture strok; gesture; gesture store;gesture library的关系如下图：
+
+
+
+
+
+实现自定义手势；检测手势
+要实现自定义手势，并且应用它，根据<<Anddroid pro4>>一书所讲的，是这么个思路：
+　　1.首先，你自己要设定好各个手势，并且设定好每个手势所对应的意义，这些手势都将存放在一个gesture store中，以一个文件表示；
+　　2.然后，要开发一个应用，该应用用到这些手势，那就将文件放在该应用的res/xml/raw中；
+　　3.在所开发的应用中，过程是这样的，系统读取用户接屏幕上所画手势，然后，去gesture store文件中去检索，看是否存在匹配的手势，如果找到匹配的，则返回该手势所定义的意义。
+
+接着要将的就是，实现上述3个功能的工具。
+
+GestureBuilder
+Android SDK的sample文件夹中，有一个GestureBuilder项目，通过该应用，你可以自定义自己的手势和该手势所对应的意思。所有定义好的手势，它都将存放在一个gesture文件中。
+
+读取gesture 文件
+在拥有了gesture 文件之后，gesture 文件就是gesture library；你就可以在任何应用中使用它。
+接下来要做的是，读取用户输入的手势；将用户输入的手势，与gesture library中的所有手势进行比对；找到匹配的，就返回对应的意义。
+
+3.读取用输入的手势---GestureOverlayView
+
+要读取用户输入的手势，可以借助这个类GestureOverlayView来实现。GestureOverView的用途，官方文档是这样说：
+A transparent overlay for gesture input //that can be placed on top of other widgets or contain other widgets.
+
+GestureOverlayView是用来读取手势输入的；
+它可以放在其他widgets之上(用Framelayout布局管理器，其他widgets在底部，GestureOverlayView在上层)；或者包含其他Widget。-不管是哪一种，在上面都可以进行绘制手势。
+
+如下：GestureOverlayView包含了其他Widget；在被包含的TextView中，进行手势绘制，
+还是会被GestureOverlayView捕捉到的。
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is /res/layout/main.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Draw gestures and I&apos;ll guess what they are" />
+
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gestureOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fadeOffset="1000" //系统根据这个值来做以下判定：
+        //一个完整的手势是否已经输入完毕(对于多笔画手势，你将要绘制的一个笔画与上//一个笔画的时间间隔不能超过1秒，若超过一秒，系统就认为你的手势只包含到上一个笔//画为止的所有笔画;用户绘制完手势后，离开屏幕，过了一秒，那么系统就认为你的绘制完//成了.)
+        android:gestureStrokeType="multiple"   //表示，可以接收多笔画的手势输入(单笔画，则手势只有一个笔画)
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/test"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:background="#DC143C"
+            android:text="test..." />
+    </android.gesture.GestureOverlayView>
+
+</LinearLayout>
+
+下面是代码，
+逻辑过程是这样的：
+GestureOverlayView负责读取用户输入的手势；
+当读取到用户输入的手势时，就通过OnGesturePerformedListener中的方法，将读取到的信息传递给使用者(MainActivity).--- onGesturePerformed(GestureOverlayView view, Gesture gesture)
+读取gesture library，这样就获取了已经预定义好的手势；然后，将预定义好的手势与用户输入的手势进行匹配，找到一个匹配，则输出结果。
+
+public class MainActivity extends Activity implements OnGesturePerformedListener
+{
+	private static final String TAG = "Gesture Revealer";
+	GestureLibrary gestureLib = null;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		// gesture store--以文件的形式存在，其中包含了各个定义好的手势
+        //在res/raw/下包含了gestures_letters文件
+		// gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures_letters);
+        //读取gesture library的方式一
+
+       //如果你自己知道gesture library存放的具体路径，则可以使用绝对路径的方式
+		String filename = Environment.getExternalStorageDirectory().toString() + "/gestures";
+		gestureLib = GestureLibraries.fromFile(filename);
+
+		// Here's where we can change the default values, prior to load
+		// gestureLib.setOrientationStyle(GestureStore.ORIENTATION_INVARIANT);
+		// gestureLib.setSequenceType(GestureStore.SEQUENCE_INVARIANT);
+
+		if (!gestureLib.load())
+		{
+			Toast.makeText(this, "Could not load " + filename, Toast.LENGTH_SHORT).show();
+			finish();
+		}
+
+		// Let's take a look at the gesture library we have work with
+		Log.v(TAG, "Library features:");
+		Log.v(TAG, "  Orientation style: " + gestureLib.getOrientationStyle());
+		Log.v(TAG, "  Sequence type: " + gestureLib.getSequenceType());
+		for (String gestureName : gestureLib.getGestureEntries())
+		{
+			Log.v(TAG, "For gesture " + gestureName);
+			int i = 1;
+			for (Gesture gesture : gestureLib.getGestures(gestureName))
+			{
+				Log.v(TAG, "    " + i + ": ID: " + gesture.getID());
+				Log.v(TAG, "    " + i + ": Strokes count: " + gesture.getStrokesCount());
+				Log.v(TAG, "    " + i + ": Stroke length: " + gesture.getLength());
+				i++;
+			}
+		}
+
+//获取GestureOverlayView实例，并给其设定OnGestruePerformedListener的实现者
+		GestureOverlayView gestureView = (GestureOverlayView) 
+findViewById(R.id.gestureOverlay);
+		gestureView.addOnGesturePerformedListener(this);
+
+		// gestureView.setGestureStrokeType(GestureOverlayView.GESTURE_STROKE_TYPE_MULTIPLE);
+	}
+
+//当GestureOverlayview读取到用户输入的一个手势时，就会回调该方法，将得到的
+//信息view, gesture传递给该方法
+	public void onGesturePerformed(GestureOverlayView view, Gesture gesture)
+	{
+		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+		Log.v(TAG, "in onGesturePerformed");
+
+		if (predictions.size() > 0)
+		{
+			Prediction prediction = (Prediction) predictions.get(0);
+			if (prediction.score > 1.0)
+			{
+				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT).show();
+				for (int i = 0; i < predictions.size(); i++)
+					Log.v(TAG, "prediction " + predictions.get(i).name + " - score = " + predictions.get(i).score);
+			}
+		}
+	}
+}
+
+onGesturePerformed的Logcat的一个输出例子：
+其中prediction.name为yes;E,j是对应预定义好的手势值
+ in onGesturePerformed
+ prediction yes - score = 14.849038635148675
+ prediction E - score = 0.5158480488699239
+ prediction j - score = 0.5000268533345971
+
+从这个LogCat中，可以得到的逻辑是：
+　　ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+　　recognize会取出gestureLib中的每个预定义好的手势与用户输入的一个手势进行比较。比如，有三个预定义好的手势，那么，就会有三个Prediction(与用户输入的一个手势的对比结果存放在其中)，其中score值最大的(表示与用户的输入最匹配)，则为第0个prediction。
+　　
+
+记录预定义的手势
+在2中，讲了，怎样记录预定义的手势：
+“
+GestureBuilder
+Android SDK的sample文件夹中，有一个GestureBuilder项目，通过该应用，你可以自定义自己的手势和该手势所对应的意思。所有定义好的手势，它都将存放在一个gesture文件中。
+”
+
