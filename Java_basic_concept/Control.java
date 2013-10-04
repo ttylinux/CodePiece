@@ -112,3 +112,11 @@ class SpeedStatus extends AlertStatus {
 		System.out.println("stop in SpeedStatus");
 	}
 }
+
+/**
+*
+*输出：
+*move in  NormalStatus
+*move in SpeedStatus
+*
+/
