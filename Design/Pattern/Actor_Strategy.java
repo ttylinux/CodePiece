@@ -13,7 +13,8 @@ public class Actor_Strategy
 {
   public static void process(Actor act, String s)
   {
-	  System.out.println("Doing something. Call act do. ");
+      
+	  System.out.println("Doing something. Call act do. ");//这个表示process自身的固定的处理流程
 	  act.perform(s);
   }
 	
