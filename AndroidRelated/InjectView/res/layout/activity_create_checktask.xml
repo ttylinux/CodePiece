@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/header_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/header" />
+
+    <ImageView
+        android:id="@+id/typeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/checkType_txt"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/checkType"
+        android:src="@drawable/type_icon" />
+
+    <TextView
+        android:id="@+id/checkType_txt"
+        style="@style/dimission_text_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/header_linear"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/checkType" />
+
+    <TextView
+        android:id="@+id/checkType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/checkType_txt"
+        android:layout_marginLeft="100dp"
+        android:text="远程督察" />
+
+    <View
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="1.0dp"
+        android:layout_below="@+id/checkType_txt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/line_sp_new" />
+
+    <!-- 督查主题 -->
+
+    <ImageView
+        android:id="@+id/issueIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/issue"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/checkType"
+        android:src="@drawable/issue_icon" />
+
+    <TextView
+        android:id="@+id/issue"
+        style="@style/dimission_text_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/checkType_txt"
+        android:layout_alignRight="@+id/checkType_txt"
+        android:layout_below="@+id/checkType"
+        android:layout_marginTop="30dp"
+        android:text="@string/checkIssue" />
+
+    <TextView
+        android:id="@+id/issue_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/issue"
+        android:layout_alignLeft="@+id/checkType"
+        android:hint="点击，选择主题" />
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1.0dp"
+        android:layout_below="@+id/issue_edit"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/line_sp_new" />
+
+    <!-- 督查主题END -->
+
+
+    <!-- 督查说明 -->
+
+    <ImageView
+        android:id="@+id/detailsIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/detailsHint"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/checkType"
+        android:src="@drawable/detail_icon" />
+
+    <TextView
+        android:id="@+id/detailsHint"
+        style="@style/dimission_text_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/detail_edit"
+        android:layout_alignLeft="@+id/issue"
+        android:text="@string/detail" />
+
+    <EditText
+        android:id="@+id/detail_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/issue_edit"
+        android:layout_below="@+id/issue_edit"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="30dp"
+        android:hint="@string/detailHint" />
+
+    <View
+        android:id="@+id/line3"
+        android:layout_width="match_parent"
+        android:layout_height="1.0dp"
+        android:layout_below="@+id/detail_edit"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/line_sp_new" />
+
+    <!-- 督查说明END -->
+
+
+    <!-- 填写备注 -->
+
+    <ImageView
+        android:id="@+id/remarkIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/remarkHint"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/checkType"
+        android:src="@drawable/remark_icon" />
+
+    <TextView
+        android:id="@+id/remarkHint"
+        style="@style/dimission_text_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/remark_edit"
+        android:layout_alignLeft="@+id/issue"
+        android:text="@string/checkRemark" />
+
+    <EditText
+        android:id="@+id/remark_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/issue_edit"
+        android:layout_below="@+id/detail_edit"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="30dp"
+        android:hint="@string/checkRemarkHint" />
+
+    <View
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="1.0dp"
+        android:layout_below="@+id/remark_edit"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/line_sp_new" />
+    <!-- 填写备注END -->
+
+    <ImageView
+        android:id="@+id/performerIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/performer_txt"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/checkType"
+        android:src="@drawable/perform_selecter_icon" />
+
+    <TextView
+        android:id="@+id/performer_txt"
+        style="@style/dimission_text_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/checkType_txt"
+        android:layout_below="@+id/remark_edit"
+        android:layout_marginTop="40dp"
+        android:text="@string/performer" />
+
+    <ImageButton
+        android:id="@+id/performer_addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/performer_txt"
+        android:layout_alignRight="@+id/remark_edit"
+        android:background="@color/white"
+        android:contentDescription="@string/choice"
+        android:src="@drawable/arrow" />
+
+    <ListView
+        android:id="@+id/performerList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/checkType_txt"
+        android:layout_alignRight="@+id/remark_edit"
+        android:layout_below="@+id/performer_addBtn" >
+    </ListView>
+
+</RelativeLayout>
